@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Quiz</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background-color: #ffe4e1; /* Soft pink background */
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #fffaf0; /* Light cream color */
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #d63384; /* Pinkish text */
+        }
+        .question {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b5e83; /* Soft purple */
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: #ffb6c1; /* Light pink */
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .options button:hover {
+            background: #ff69b4; /* Bright pink */
+        }
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+            color: #d63384;
+            font-size: 18px;
+        }
+        #next, #submit {
+            background: #ff69b4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        #next:hover, #submit:hover {
+            background: #d63384;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>How Well Do You Know My Sister?</h2>
+        <div id="quiz"></div>
+        <button id="next" style="display:none;">Next</button>
+        <button id="submit" style="display:none;">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What is her favorite color?", options: ["A. Red", "B. Blue", "C. Green", "D. Yellow"], answer: "B" },
+            { question: "Which pet does she like most?", options: ["A. Dog", "B. Cat", "C. Rabbit", "D. Bird"], answer: "A" },
+            { question: "What is her birth month?", options: ["A. January", "B. March", "C. June", "D. September"], answer: "C" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        const quizDiv = document.getElementById("quiz");
+        const nextBtn = document.getElementById("next");
+        const submitBtn = document.getElementById("submit");
+
+        function loadQuestion(index) {
+            quizDiv.innerHTML = "";
+            const q = questions[index];
+            const qDiv = document.createElement("div");
+            qDiv.classList.add("question");
+            qDiv.innerHTML = `<p>${q.question}</p>`;
+            
+            const optionsDiv = document.createElement("div");
+            optionsDiv.classList.add("options");
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.textContent = opt;
+                btn.onclick = () => selectAnswer(index, opt.charAt(0), btn);
+                optionsDiv.appendChild(btn);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizDiv.appendChild(qDiv);
+            
+            nextBtn.style.display = "none";
+            if (index < questions.length - 1) {
+                nextBtn.style.display = "block";
+            } else {
+                submitBtn.style.display = "block";
+            }
+        }
+
+        function selectAnswer(qIndex, answer, btn) {
+            userAnswers[qIndex] = answer;
+            const buttons = btn.parentElement.querySelectorAll("button");
+            buttons.forEach(b => b.style.background = "#ffb6c1");
+            btn.style.background = "#d63384";
+        }
+
+        nextBtn.addEventListener("click", () => {
+            if (userAnswers[currentQuestionIndex] !== undefined) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+            } else {
+                alert("Please select an answer before proceeding.");
+            }
+        });
+
+        submitBtn.addEventListener("click", () => {
+            let score = 0;
+            questions.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) {
+                    score++;
+                }
+            });
+            document.getElementById("result").textContent = `You scored ${score} out of ${questions.length}!`;
+        });
+
+        loadQuestion(currentQuestionIndex);
+    </script>
+</body>
+</html>
